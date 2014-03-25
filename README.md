@@ -40,6 +40,12 @@ sudo easy_install paramiko
 
 This project was originally built when trying to control an RC Car with a Raspberry Pi. 
 
+## Issues
 
+If you run into issues with python.
+
+```
+sudo apt-get install python-apt --fix-missing
+```
 
 

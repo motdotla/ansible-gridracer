@@ -2,17 +2,26 @@
 - name: 'Configure WIFI'
   copy: src=./wpa_supplicant.conf dest=/etc/wpa_supplicant/wpa_supplicant.conf mode=0600
 
-- name: 'Update APT package cache'
-  action: apt update_cache=yes
+- name: 'Update cache'
+  apt: update_cache=yes
 
-- name: 'Upgrade APT to the lastest packages'
-  action: apt upgrade=safe
+- name: 'Ignore Woflram - which is failing to install and is also annoyingly huge. Why the eff is this installed by default!'
+  shell: apt-mark hold wolfram-engine
+
+- name: 'Upgrade full'
+  command: apt-get upgrade
 
 - name: 'Get node'
   command: wget http://nodejs.org/dist/v0.10.2/node-v0.10.2-linux-arm-pi.tar.gz
 
 - name: 'Untar node'
   command: tar -xvzf node-v0.10.2-linux-arm-pi.tar.gz
+
+- name: 'Add to bash profile'
+  command: echo 'NODE_JS_HOME=/home/pi/node-v0.10.2-linux-arm-pi' >>~/.bash_profile
+
+- name: 'Add to bash profile'
+  command: echo 'PATH=$PATH:$NODE_JS_HOME/bin' >>~/.bash_profile
 
 - name: 'Reboot'
   command: /sbin/reboot -t now
