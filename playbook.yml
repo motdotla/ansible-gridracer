@@ -1,0 +1,9 @@
+---
+
+- name: Ansible Playbook for configuring gridracer on brand new Raspberry Pi
+
+  hosts: webservers
+  roles:
+    - pi
+  remote_user: pi
+  sudo: yes
