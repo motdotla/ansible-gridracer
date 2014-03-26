@@ -28,11 +28,11 @@
   when: check_node.stat.exists == false
 
 - name: 'Symlink node'
-  command: ln -s node-v0.10.2-linux-arm-pi/bin/node /usr/bin/node
+  command: ln -s /home/pi/node-v0.10.2-linux-arm-pi/bin/node /usr/bin/node
   when: check_node.stat.exists == false
 
 - name: 'Symlink npm'
-  command: ln -s node-v0.10.2-linux-arm-pi/bin/npm /usr/bin/npm
+  command: ln -s /home/pi/node-v0.10.2-linux-arm-pi/bin/npm /usr/bin/npm
   ignore_errors: True
   when: check_npm.stat.exists == false
 
