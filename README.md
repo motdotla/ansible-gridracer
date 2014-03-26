@@ -9,6 +9,7 @@ git clone https://github.com/scottmotte/ansible-gridracer.git
 cd ansible-gridracer
 cp hosts.example hosts
 cp wpa_supplicant.conf.example wpa_supplicant.conf
+cp .ngrok.example .ngrok
 ```
 
 Edit the `wpa_supplicant.conf` and `hosts` files.

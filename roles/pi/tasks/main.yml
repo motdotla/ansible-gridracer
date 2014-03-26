@@ -1,14 +1,14 @@
 ---
-- name: 'Configure WIFI'
+- name: Configure WIFI
   copy: src=./wpa_supplicant.conf dest=/etc/wpa_supplicant/wpa_supplicant.conf mode=0600
 
-- name: 'Update cache'
+- name: Update cache
   apt: update_cache=yes
 
-- name: 'Ignore Woflram - which is failing to install and is also annoyingly huge. Why the eff is this installed by default!'
+- name: Ignore Woflram - which is failing to install and is also annoyingly huge. Why the eff is this installed by default!
   shell: apt-mark hold wolfram-engine
 
-- name: 'Upgrade full'
+- name: Upgrade full
   command: apt-get upgrade
 
 - name: Check if node path exists
@@ -19,27 +19,57 @@
   stat: path=/usr/bin/npm
   register: check_npm
 
-- name: 'Get node'
+- name: Get node
   command: wget http://nodejs.org/dist/v0.10.2/node-v0.10.2-linux-arm-pi.tar.gz
   when: check_node.stat.exists == false
 
-- name: 'Untar node'
+- name: Untar node
   command: tar -xvzf node-v0.10.2-linux-arm-pi.tar.gz
   when: check_node.stat.exists == false
 
-- name: 'Symlink node'
+- name: Symlink node
   command: ln -s /home/pi/node-v0.10.2-linux-arm-pi/bin/node /usr/bin/node
   when: check_node.stat.exists == false
 
-- name: 'Symlink npm'
+- name: Symlink npm
   command: ln -s /home/pi/node-v0.10.2-linux-arm-pi/bin/npm /usr/bin/npm
   ignore_errors: True
   when: check_npm.stat.exists == false
+
+- name: Check if ngrok path exists
+  stat: path=/usr/bin/ngrok
+  register: check_ngrok
+
+- name: Check if .ngrok file exists
+  stat: path=/home/pi/.ngrok
+  register: check_dot_ngrok
+
+- name: Get ngrok
+  command: wget https://dl.ngrok.com/linux_arm/ngrok.zip 
+  when: check_ngrok.stat.exists == false
+
+- name: Unzip ngrok
+  command: unzip ngrok.zip
+  when: check_ngrok.stat.exists == false
+
+- name: Move ngrok
+  command: mv ngrok /usr/bin/ngrok
+  when: check_ngrok.stat.exists == false
+
+- name: Set ngrok permissions
+  action: file path=/usr/bin/ngrok mode=0775 owner=root group=root
+
+- name: Set ngrok authtoken
+  copy: src=./.ngrok dest=/home/pi/.ngrok mode=0600
+  when: check_dot_ngrok.stat.exists == false
 
 - name: Checkout gridracer
   git: repo=https://github.com/scottmotte/gridracer
        dest=/home/pi/gridracer
 
-- name: 'Reboot'
+- name: Npm on gridracer
+  command: chdir=/home/pi/gridracer npm install
+
+- name: Reboot
   command: /sbin/reboot -t now
 
