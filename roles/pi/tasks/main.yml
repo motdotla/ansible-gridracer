@@ -11,17 +11,30 @@
 - name: 'Upgrade full'
   command: apt-get upgrade
 
+- name: Check if node path exists
+  stat: path=/usr/bin/node
+  register: check_node
+
+- name: Check if npm path exists
+  stat: path=/usr/bin/npm
+  register: check_npm
+
 - name: 'Get node'
   command: wget http://nodejs.org/dist/v0.10.2/node-v0.10.2-linux-arm-pi.tar.gz
+  when: check_node.stat.exists == false
 
 - name: 'Untar node'
   command: tar -xvzf node-v0.10.2-linux-arm-pi.tar.gz
+  when: check_node.stat.exists == false
 
-- name: 'Add to bash profile'
-  command: echo 'NODE_JS_HOME=/home/pi/node-v0.10.2-linux-arm-pi' >>~/.bash_profile
+- name: 'Symlink node'
+  command: ln -s node-v0.10.2-linux-arm-pi/bin/node /usr/bin/node
+  when: check_node.stat.exists == false
 
-- name: 'Add to bash profile'
-  command: echo 'PATH=$PATH:$NODE_JS_HOME/bin' >>~/.bash_profile
+- name: 'Symlink npm'
+  command: ln -s node-v0.10.2-linux-arm-pi/bin/npm /usr/bin/npm
+  ignore_errors: True
+  when: check_npm.stat.exists == false
 
 - name: 'Reboot'
   command: /sbin/reboot -t now
